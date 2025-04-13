@@ -18,10 +18,17 @@ app = FastAPI()
 # Enable CORS
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["https://plane-price-prediction.onrender.com"],  # Replace with your frontend URL
+    allow_origins=[
+        "https://plane-price-prediction.onrender.com",
+        "http://localhost:3000",
+        "http://localhost:5000",
+        "http://127.0.0.1:5000",
+        "*"  # Temporarily allow all origins while testing
+    ],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
+    expose_headers=["*"]
 )
 
 # Serve static files
