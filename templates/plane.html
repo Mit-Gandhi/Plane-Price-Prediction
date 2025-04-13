@@ -30,8 +30,8 @@
 
             console.log("Sending data:", inputData);
 
-            // Change this URL to your deployed FastAPI backend
-            const backendURL = "https://plane-price-prediction.onrender.com/";
+            // Replace this with your FastAPI backend URL
+            const backendURL = "https://plane-price-backend.onrender.com/predict";
 
             try {
                 const response = await fetch(backendURL, {
