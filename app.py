@@ -42,7 +42,7 @@ class PlaneInput(BaseModel):
     Empty_Weight_lbs: float
     Range_NM: float
 
-@app.post("/predict/")
+@app.post("/predict")
 def predict_price(data: PlaneInput):
     try:
         # Convert input data to a NumPy array
