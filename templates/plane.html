@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Plane Price Prediction</title>
+    <!-- Correct the path to your CSS -->
+    <link rel="stylesheet" href="/static/css/plane.css">
+</head>
+<body>
+    <div class="card">
+        <h2>Plane Price Prediction</h2>
+        <input type="text" class="input-field" id="Engine_Type" placeholder="Engine Type">
+        <input type="number" class="input-field" id="HP_or_lbs_thr_ea_engine" placeholder="HP or lbs thr ea engine">
+        <input type="number" class="input-field" id="Fuel_gal_lbs" placeholder="Fuel (gal/lbs)">
+        <input type="number" class="input-field" id="Empty_Weight_lbs" placeholder="Empty Weight (lbs)">
+        <input type="number" class="input-field" id="Range_NM" placeholder="Range N.M">
+        <button class="button" onclick="predictPrice()">Predict Price</button>
+        <p id="predictedPrice" class="predicted-price"></p>
+    </div>
+
+    <script>
+        async function predictPrice() {
+            // Collect user input values
+            let inputData = {
+                Engine_Type: document.getElementById("Engine_Type").value,
+                HP_or_lbs_thr_ea_engine: parseFloat(document.getElementById("HP_or_lbs_thr_ea_engine").value),
+                Fuel_gal_lbs: parseFloat(document.getElementById("Fuel_gal_lbs").value),
+                Empty_Weight_lbs: parseFloat(document.getElementById("Empty_Weight_lbs").value),
+                Range_NM: parseFloat(document.getElementById("Range_NM").value)
+            };
+
+            console.log("Sending data:", inputData);  // Debugging
+
+            try {
+                // Send request to FastAPI backend
+                let response = await fetch("http://127.0.0.1:8000/predict/", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify(inputData)
+                });
+
+                if (!response.ok) {
+                    throw new Error(`HTTP error! Status: ${response.status}`);
+                }
+
+                let result = await response.json();
+                console.log("Received response:", result);  // Debugging output
+
+                // Check if predicted_price exists
+                if (result.predicted_price !== undefined) {
+                    document.getElementById("predictedPrice").innerText = "Predicted Price: ₹" + result.predicted_price.toFixed(2);
+                } else {
+                    document.getElementById("predictedPrice").innerText = "Error: " + result.error;
+                }
+
+            } catch (error) {
+                console.error("Error fetching prediction:", error);
+                document.getElementById("predictedPrice").innerText = "Error: Could not fetch prediction.";
+            }
+        }
+    </script>
+</body>
+</html>

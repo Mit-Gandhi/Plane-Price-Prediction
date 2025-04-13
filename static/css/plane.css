@@ -1,0 +1,163 @@
+/* Global Reset */
+*,
+*::before,
+*::after {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    display: flex;
+    justify-content: center;
+    align-items: flex-start; /* Align items towards the top */
+    min-height: 100vh;
+    background: url('https://hdqwalls.com/wallpapers/airplane-wings.jpg') center/cover no-repeat; /* Full background image */
+    background-attachment: fixed; /* Keeps background fixed */
+    font-family: 'Poppins', sans-serif;
+    overflow: hidden;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    padding: 0;
+    color: #fff;
+}
+
+/* Card Styling */
+.card {
+    background: rgba(0, 0, 0, 0.5); /* Dark overlay behind card content */
+    padding: 30px 50px;
+    box-shadow: 0 20px 50px rgba(0, 0, 0, 0.4);
+    border-radius: 20px;
+    width: 600px; /* Increased width */
+    height: 550px; /* Increased height */
+    text-align: center;
+    transition: transform 0.4s ease, box-shadow 0.4s ease, background 0.4s ease;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    position: relative;
+    transform-origin: center;
+    backdrop-filter: blur(10px); /* Apply blur effect */
+    background-color: rgba(0, 0, 0, 0.5); /* Optional overlay for better visibility */
+    margin-top: 100px; /* Shift card slightly up */
+}
+
+/* Optional: Add an overlay to make text stand out more on top of the image */
+.card::before {
+    content: '';
+    position: absolute;
+    top: -8px;
+    left: -8px;
+    right: -8px;
+    bottom: -8px;
+    border-radius: 20px;
+    background: rgba(0, 0, 0, 0.3); /* Dark overlay */
+    z-index: -1;
+}
+
+/* Input Field Styling */
+.input-field {
+    width: 100%;
+    padding: 16px 20px; /* Adjusted padding */
+    margin: 10px 0;
+    border: 2px solid rgba(26, 188, 156, 0.6);
+    border-radius: 14px;
+    font-size: 16px;
+    color: #fff;
+    background-color: rgba(255, 255, 255, 0.1);
+    box-shadow: 0 0 8px rgba(26, 188, 156, 0.2);
+    transition: all 0.3s ease;
+    font-weight: 400;
+}
+
+.input-field::placeholder {
+    color: rgba(255, 255, 255, 0.6);
+    font-style: italic;
+}
+
+.input-field:focus {
+    border-color: #1abc9c;
+    box-shadow: 0 0 12px rgba(26, 188, 156, 0.4);
+    outline: none;
+    background-color: rgba(255, 255, 255, 0.2);
+}
+
+.input-field:focus::placeholder {
+    color: #1abc9c;
+}
+
+/* Button Styling */
+.button {
+    width: 100%;
+    padding: 14px;
+    background: linear-gradient(to right, #2980b9, #6dd5ed);
+    color: white;
+    border: none;
+    border-radius: 14px;
+    cursor: pointer;
+    font-size: 16px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    box-shadow: 0 6px 15px rgba(0, 0, 0, 0.3);
+    transition: all 0.4s ease;
+}
+
+.button:hover {
+    background: linear-gradient(to right, #6dd5ed, #2980b9);
+    transform: translateY(-3px);
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.4);
+}
+
+.button:active {
+    transform: translateY(2px);
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);
+}
+
+.button:disabled {
+    background: #555;
+    cursor: not-allowed;
+    box-shadow: none;
+    color: rgba(255, 255, 255, 0.5);
+}
+
+/* Predicted Price Styling */
+.predicted-price {
+    font-size: 22px;
+    font-weight: 700;
+    color: #f39c12;
+    margin-top: 20px;
+    opacity: 1;
+    transition: opacity 0.3s ease;
+}
+
+.card.show-price .predicted-price {
+    opacity: 1;
+    animation: fadeIn 0.5s ease-out;
+}
+
+@keyframes fadeIn {
+    0% {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+    100% {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Responsive Design */
+@media (max-width: 480px) {
+    .card {
+        width: 90%;
+        padding: 20px;
+    }
+
+    .input-field,
+    .button {
+        font-size: 14px; /* Smaller font size for mobile */
+    }
+
+    .predicted-price {
+        font-size: 20px; /* Adjusted font size for mobile */
+    }
+}
