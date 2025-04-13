@@ -1,41 +1,48 @@
-from fastapi import FastAPI
+from fastapi import FastAPI, HTTPException
 from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
 from fastapi.middleware.cors import CORSMiddleware
-from fastapi.responses import FileResponse
+from fastapi.responses import FileResponse, JSONResponse
 import joblib
 import numpy as np
 from pydantic import BaseModel
-
-# Load model and preprocessors
-regressor = joblib.load("random_forest_regressor_model.joblib")
-ct = joblib.load("column_transformer.joblib")
-sc = joblib.load("standard_scaler.joblib")
+import os
 
 # Initialize FastAPI app
-app = FastAPI()
+app = FastAPI(title="Plane Price Prediction API")
 
 # Enable CORS
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=[
-        "https://plane-price-prediction.onrender.com",
-        "http://localhost:3000",
-        "http://localhost:5000",
-        "http://127.0.0.1:5000",
-        "*"  # Temporarily allow all origins while testing
-    ],
-    allow_credentials=True,
-    allow_methods=["*"],
-    allow_headers=["*"],
-    expose_headers=["*"]
+    allow_origins=["https://plane-price-prediction.onrender.com"],
+    allow_credentials=False,
+    allow_methods=["GET", "POST"],
+    allow_headers=["Content-Type", "Accept"]
 )
+
+# Load model and preprocessors
+try:
+    regressor = joblib.load("random_forest_regressor_model.joblib")
+    ct = joblib.load("column_transformer.joblib")
+    sc = joblib.load("standard_scaler.joblib")
+    models_loaded = True
+except Exception as e:
+    print(f"Error loading models: {str(e)}")
+    models_loaded = False
 
 # Serve static files
 app.mount("/static", StaticFiles(directory="static"), name="static")
 
 # Templates setup for rendering HTML
 templates = Jinja2Templates(directory="templates")
+
+@app.get("/")
+async def root():
+    return {"status": "ok", "message": "Plane Price Prediction API is running", "models_loaded": models_loaded}
+
+@app.get("/health")
+async def health_check():
+    return {"status": "healthy", "models_loaded": models_loaded}
 
 # Serve main HTML file
 @app.get("/")
@@ -52,11 +59,14 @@ class PlaneInput(BaseModel):
 
 # Prediction endpoint
 @app.post("/predict")
-def predict_price(data: PlaneInput):
+async def predict_price(data: PlaneInput):
+    if not models_loaded:
+        raise HTTPException(status_code=500, detail="Models not loaded properly")
+        
     try:
         # Prepare the input data
         input_data = np.array([[data.Engine_Type, data.HP_or_lbs_thr_ea_engine,
-                                data.Fuel_gal_lbs, data.Empty_Weight_lbs, data.Range_NM]])
+                              data.Fuel_gal_lbs, data.Empty_Weight_lbs, data.Range_NM]])
 
         # Apply transformations
         input_encoded = ct.transform(input_data)
@@ -65,7 +75,7 @@ def predict_price(data: PlaneInput):
         # Predict the price
         predicted_price = regressor.predict(input_scaled)[0]
 
-        return {"predicted_price": predicted_price}
+        return {"predicted_price": float(predicted_price)}
 
     except Exception as e:
-        return {"error": str(e)}
+        raise HTTPException(status_code=500, detail=str(e))
