@@ -37,11 +37,9 @@
                 const response = await fetch(backendURL, {
                     method: "POST",
                     headers: {
-                        "Content-Type": "application/json",
-                        "Accept": "application/json"
+                        "Content-Type": "application/json"
                     },
                     mode: "cors",
-                    credentials: "include",
                     body: JSON.stringify(inputData)
                 });
 
